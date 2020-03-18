@@ -1,0 +1,37 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+.classpath
+.project
+.settings/
+.DS_Store
+*/.classpath
+*/.project
+*/.settings
+api/nohup.out
+build/
+.idea
+.gradle
+eclipse-projects.gradle
+.gradletasknamecache
+/out
+*.iml
+*.ipr
+*.iws
+*.class
+*.tar
+bin/
+/bin/
+/TestRecent.java
+classes/
+out/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/config.yml
+!.elasticbeanstalk/*.global.yml
+
+##local Tomcat Logs
+catalina.home_IS_UNDEFINED/
+*.log
+
+##local Dynamo DB
+dynamodb_local/
