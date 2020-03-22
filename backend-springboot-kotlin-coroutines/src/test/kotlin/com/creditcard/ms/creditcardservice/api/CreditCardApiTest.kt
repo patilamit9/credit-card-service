@@ -31,7 +31,7 @@ class CreditCardApiTest {
     @Test
     fun `register new credit card`(){
         //prepare
-        val requestBody = RequestBody(12345, "test user")
+        val requestBody = RequestBody("234567", "test user")
 
         //mock
         doNothing().`when`(service).register(requestBody)
@@ -45,7 +45,6 @@ class CreditCardApiTest {
                 .expectStatus().isCreated
     }
 
-
     @Test
     fun `register new credit card without card holder name`(){
 
@@ -56,7 +55,25 @@ class CreditCardApiTest {
                 .exchange()
                 .expectStatus()
                 .isBadRequest
-
-
     }
+
+    @Test
+    fun `register new credit card with invalid credit card number Luhn rule incompatible`(){
+        //prepare
+        val requestBody = RequestBody("1234567", "test user")
+
+        //mock
+        doNothing().`when`(service).register(requestBody)
+
+        //test
+        webTestClient.post()
+                .uri("/api/v1/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
+                .exchange()
+                .expectStatus().isBadRequest
+                .expectBody()
+                .consumeWith { print(it) }
+    }
+
 }

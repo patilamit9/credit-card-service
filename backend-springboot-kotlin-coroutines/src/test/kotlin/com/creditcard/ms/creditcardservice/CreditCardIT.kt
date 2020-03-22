@@ -24,7 +24,7 @@ class CreditCardIT {
     fun `register new credit card details`() {
 
         //prepare
-        val requestBody = RequestBody(12345, "test user")
+        val requestBody = RequestBody("234567", "test user")
 
         //test
         webTestClient.post()
