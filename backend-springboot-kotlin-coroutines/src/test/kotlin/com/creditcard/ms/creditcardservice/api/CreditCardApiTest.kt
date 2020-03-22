@@ -4,11 +4,7 @@ import com.creditcard.ms.creditcardservice.api.domain.RequestBody
 import com.creditcard.ms.creditcardservice.helper.Service
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.doNothing
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -46,7 +42,7 @@ class CreditCardApiTest {
     }
 
     @Test
-    fun `register new credit card without card holder name`(){
+    fun `register new credit card without body`(){
 
         //test
         webTestClient.post()
@@ -55,6 +51,8 @@ class CreditCardApiTest {
                 .exchange()
                 .expectStatus()
                 .isBadRequest
+                .expectBody()
+                .consumeWith { print(it) }
     }
 
     @Test
@@ -74,6 +72,8 @@ class CreditCardApiTest {
                 .expectStatus().isBadRequest
                 .expectBody()
                 .consumeWith { print(it) }
+                .jsonPath("$.status").isEqualTo("failure")
+                .jsonPath("$.error").isEqualTo("Invalid credit card")
     }
 
 }
