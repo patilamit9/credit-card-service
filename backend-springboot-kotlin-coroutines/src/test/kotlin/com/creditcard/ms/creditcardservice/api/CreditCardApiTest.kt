@@ -78,4 +78,20 @@ class CreditCardApiTest {
                 .jsonPath("$.error").isEqualTo("Invalid credit card")
     }
 
+    @Test
+    fun `get all registered credit card details`(){
+
+        //mock
+        `when`(cardRepository.findAll()).thenReturn(mutableListOf(Card(0, "234567", "test user", 0.0, 0.0)))
+
+        //test
+        webTestClient.get()
+                .uri("/api/v1/all")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$[0].card_number").isEqualTo("234567")
+    }
+
 }
