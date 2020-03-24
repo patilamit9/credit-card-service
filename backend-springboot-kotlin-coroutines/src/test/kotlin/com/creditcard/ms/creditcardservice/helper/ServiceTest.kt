@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -33,6 +34,11 @@ class ServiceTest {
     @Autowired
     private lateinit var cardRepository: CardRepository
 
+    @BeforeEach
+    fun clearTestData(){
+        cardRepository.deleteAll()
+    }
+
     @Test
     fun `register card`() {
         //Prepare
@@ -44,5 +50,23 @@ class ServiceTest {
         //verify
         val card = cardRepository.findByCardNo("123456")
         assertNotNull(card)
+    }
+
+    @Test
+    fun `get all registered card details`() {
+        //Prepare
+        val card = Card(0, "1234567890", "test", 100.0, 200.0)
+        cardRepository.save(card)
+
+        //test
+        val cardDetails = service.getAllRegisteredCreditCards()
+
+        //verify
+        assertNotNull(cardDetails)
+        assertEquals(1, cardDetails.size)
+        assertEquals("1234567890", cardDetails[0].cardNo)
+        assertEquals("test", cardDetails[0].cardHolderName)
+        assertEquals(100.0, cardDetails[0].balance)
+        assertEquals(200.0, cardDetails[0].limit)
     }
 }
