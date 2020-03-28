@@ -1,6 +1,7 @@
 package com.creditcard.ms.creditcardservice.api
 
 import com.creditcard.ms.creditcardservice.api.domain.ApiResponse
+import com.creditcard.ms.creditcardservice.api.error.CardDetailsNotAvailable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -35,6 +36,14 @@ class GlobalExceptionHandle {
         logger.error("Api validation fail :: ", ex)
         val message = ex.bindingResult.fieldErrors.stream()
                 .map { it.defaultMessage }.findFirst().orElse(ex.message) ?: "error"
+        return ApiResponse(message)
+    }
+
+    @ExceptionHandler(CardDetailsNotAvailable::class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun noCardDetailsPresent(ex: CardDetailsNotAvailable): ApiResponse {
+        logger.error("Api validation fail :: ", ex)
+        val message = (ex.message) ?: "error"
         return ApiResponse(message)
     }
 }

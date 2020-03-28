@@ -21,18 +21,25 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [AppConfig::class])
+@ExtendWith(MockitoExtension::class)
+//@ContextConfiguration(classes = [AppConfig::class])
 class ServiceTest {
 
-    @Autowired
+    //@Autowired
     private lateinit var service: Service
 
-    @Autowired
+    @Mock
     private lateinit var cardRepository: CardRepository
+
+    @BeforeEach
+    fun init(){
+        service = Service(cardRepository)
+    }
 
     @BeforeEach
     fun clearTestData(){
@@ -40,33 +47,22 @@ class ServiceTest {
     }
 
     @Test
-    fun `register card`() {
-        //Prepare
-        val requestBody = RequestBody("123456", "test test")
-
-        //test
-        service.register(requestBody)
-
-        //verify
-        val card = cardRepository.findByCardNo("123456")
-        assertNotNull(card)
-    }
-
-    @Test
     fun `get all registered card details`() {
         //Prepare
-        val card = Card(0, "1234567890", "test", 100.0, 200.0)
-        cardRepository.save(card)
+        val cards = listOf<Card>(Card(0, "1234567890", "test", 100.0, 200.0))
+        val page = PageImpl<Card>(cards)
+
+        `when`(cardRepository.findAll(any(Pageable::class.java))).thenReturn(page)
 
         //test
         val cardDetails = service.getAllRegisteredCreditCards()
 
         //verify
         assertNotNull(cardDetails)
-        assertEquals(1, cardDetails.size)
-        assertEquals("1234567890", cardDetails[0].cardNo)
-        assertEquals("test", cardDetails[0].cardHolderName)
-        assertEquals(100.0, cardDetails[0].balance)
-        assertEquals(200.0, cardDetails[0].limit)
+        assertEquals(cards.size, cardDetails.size)
+        assertEquals(cards[0].cardNo, cardDetails[0].cardNo)
+        assertEquals(cards[0].cardHolderName, cardDetails[0].cardHolderName)
+        assertEquals(cards[0].balance, cardDetails[0].balance)
+        assertEquals(cards[0].limit, cardDetails[0].limit)
     }
 }

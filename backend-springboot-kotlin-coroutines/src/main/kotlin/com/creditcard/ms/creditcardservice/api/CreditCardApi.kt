@@ -27,8 +27,9 @@ class CreditCardApi {
     }
 
     @GetMapping(value = ["all"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllRegisteredCreditCards(): List<CardResponseVO> {
-        return service.getAllRegisteredCreditCards()
+    suspend fun getAllRegisteredCreditCards(@RequestParam page: Int = 0,
+                                            @RequestParam size: Int = 10): List<CardResponseVO> {
+        return service.getAllRegisteredCreditCards(page, size)
     }
 
 }
